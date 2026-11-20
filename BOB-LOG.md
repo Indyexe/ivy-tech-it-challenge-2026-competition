@@ -38,3 +38,15 @@ For transparency: besides IBM Bob, Kaleb used **Claude (Anthropic)** as a review
 | Task tested | What the pilot user encountered | Change made | Retest result | Commit |
 | --- | --- | --- | --- | --- |
 | | | | | |
+
+Collin Haynes - Bob Log
+
+ 
+
+Collin Haynes Bob Logs
+
+Polish the existing A-IVY website in ivy-tech-it-challenge-2026-competition. Build on my teammate’s current version and preserve its pages, copy, demo data, navigation, and functionality. Focus on visual design, responsive layout, and interaction.
+
+Look for starfield.mjs and the related CSS in the repo or its Git history, then adapt them to the current layout. On desktop, nearby stars should brighten and drift as the mouse moves, then ease back when it leaves. A soft emerald glow should follow the pointer inside feature cards. Keep effects behind the content so they never block clicks or make text hard to read.
+Make the site work well on phones. Stack cards and form fields into a single column on narrow screens. Use readable text, comfortable tap targets, and navigation that fits without horizontal scrolling. Keep the stars static on touch devices and give cards and buttons a brief visual response when tapped. Every action must work without hover. Respect reduced-motion preferences and keep keyboard focus clearly visible.
+Double-check the work before calling it done. Preview the site at roughly 360 px, 390 px, 768 px, and desktop width. Check for clipped text, overlapping controls, and horizontal scrolling. On desktop, verify that the stars and card glow respond to the mouse. On mobile, verify that the menu opens and closes and that buttons and form fields work by touch. Complete the Responsible AI Guide workflow on both layouts, from selecting a course to seeing the answer, syllabus excerpt, and next step. Run the existing tests, fix anything that breaks, and report what you verified and what still needs checking.
