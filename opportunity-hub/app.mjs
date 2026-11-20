@@ -664,7 +664,7 @@ quizForm.addEventListener('submit', (event) => {
     quizResult.hidden = true;
     renderLiteracy();
     badgePanel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    announce(`You passed with ${score.correct} of ${score.total}. Badge earned!`);
+    announce('You passed! Badge earned.');
     return;
   }
 
