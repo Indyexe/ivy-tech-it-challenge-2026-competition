@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0B1426">
+  <title>A-Ivy — Use AI with confidence and integrity</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.mjs"></script>
+  <script type="module" src="starfield.mjs"></script>
+</head>
+<body>
+
+<!-- Decorative starfield: sits behind everything and never takes clicks -->
+<canvas id="starfield" aria-hidden="true"></canvas>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ── Header ──────────────────────────────────────────────────────────────── -->
+<header class="site-header">
+  <a href="#ai-check" class="logo" aria-label="A-Ivy home">
+    <img src="a-ivy-logo-white.webp" alt="A-Ivy logo" width="132" height="44">
+  </a>
+
+  <button class="menu-toggle" id="menu-toggle" type="button"
+          aria-expanded="false" aria-controls="site-nav">
+    <span class="menu-icon" aria-hidden="true"></span>
+    <span class="menu-label">Menu</span>
+  </button>
+
+  <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+    <!-- Student nav -->
+    <a href="#ai-check" class="student-only" data-nav="ai-check">AI Check</a>
+    <a href="#ai-coach" class="student-only" data-nav="ai-coach">AI Coach</a>
+    <a href="#literacy" class="student-only" data-nav="literacy">AI Literacy</a>
+    <a href="#projects" class="student-only" data-nav="projects">Projects</a>
+    <a href="#events"   class="student-only" data-nav="events">Events</a>
+    <!-- Instructor nav -->
+    <a href="#policies"         class="instructor-only" data-nav="policies">Course Policies</a>
+    <a href="#literacy-results" class="instructor-only" data-nav="literacy-results">AI Literacy Results</a>
+    <a href="#projects"         class="instructor-only" data-nav="projects">Projects</a>
+
+    <div class="role-switcher">
+      <label for="role-select">View as</label>
+      <select id="role-select">
+        <option value="student">Student</option>
+        <option value="instructor">Instructor</option>
+      </select>
+    </div>
+  </nav>
+</header>
+
+<!-- ── Demo banner ─────────────────────────────────────────────────────────── -->
+<div class="demo-banner" role="note" id="demo-banner">
+  <strong>Demo mode</strong> · <span id="demo-profile-name">Alex Rivera (CIT)</span> ·
+  Sample data only. No real student or instructor information is stored.
+</div>
+
+<!-- ── Main content ────────────────────────────────────────────────────────── -->
+<main id="main">
+
+  <!-- ── AI Check (student home) ─────────────────────────────────────────── -->
+  <section data-view="ai-check" aria-labelledby="ai-check-title" hidden>
+    <div class="hero">
+      <p class="eyebrow">Student · Responsible-AI Guide</p>
+      <h1 id="ai-check-title" tabindex="-1">Know the AI rules for every class.</h1>
+      <p class="hero-lead">
+        Every syllabus has a different AI policy. Find your course, ask your question,
+        and get the exact rule from your syllabus, plus what to do next.
+      </p>
+      <div class="hero-actions">
+        <button type="button" class="btn btn-primary btn-lg" id="hero-check-btn">
+          Check a course policy <span aria-hidden="true">→</span>
+        </button>
+        <a class="btn btn-ghost" href="#literacy">Earn your AI Literacy badge</a>
+      </div>
+    </div>
+
+    <ol class="feature-grid" aria-label="How A-Ivy works">
+      <li class="feature-card glow-card">
+        <span class="feature-step" aria-hidden="true">1</span>
+        <h2>Find your course</h2>
+        <p>Search by course code or name. Your schedule shows first.</p>
+      </li>
+      <li class="feature-card glow-card">
+        <span class="feature-step" aria-hidden="true">2</span>
+        <h2>Ask your question</h2>
+        <p>"Can I use AI to check my grammar?" Plain words are fine.</p>
+      </li>
+      <li class="feature-card glow-card">
+        <span class="feature-step" aria-hidden="true">3</span>
+        <h2>Get the rule + next step</h2>
+        <p>See the syllabus quote, a tip, and a way to ask your instructor.</p>
+      </li>
+    </ol>
+
+    <!-- Course search -->
+    <div class="panel" id="course-finder">
+      <div class="form-group">
+        <label for="course-search">Find your course</label>
+        <input type="search" id="course-search" autocomplete="off"
+               placeholder="Search by course code or name, e.g. ENGL 111"
+               aria-describedby="course-search-hint" aria-controls="course-list">
+        <p id="course-search-hint" class="hint"><span id="course-count"></span></p>
+      </div>
+      <ul class="course-list" id="course-list" role="list"></ul>
+      <p class="empty-state" id="course-empty" hidden>
+        No course found. Check the course code, or ask your instructor.
+      </p>
+    </div>
+
+    <!-- Course detail: moved inside whichever course card is open -->
+    <div id="course-detail" class="course-detail" hidden>
+      <div class="card-header">
+        <h3 id="traffic-light-heading">AI use rules for this course</h3>
+        <span class="last-updated" id="course-last-updated"></span>
+      </div>
+      <ul class="traffic-light" id="traffic-light" role="list" aria-labelledby="traffic-light-heading"></ul>
+      <p class="hint" id="course-policy-label"></p>
+
+      <form id="question-form" class="question-form" novalidate>
+        <div class="form-group">
+          <label for="question-input">Ask about AI on your assignment</label>
+          <textarea id="question-input" name="question" rows="3"
+                    placeholder="e.g. Can I use AI to brainstorm ideas for my essay?"
+                    aria-describedby="question-hint"></textarea>
+          <p id="question-hint" class="hint">Answers come only from this course's policy. No AI guessing.</p>
+        </div>
+        <div class="chips" aria-label="Example questions">
+          <button type="button" class="chip" data-q="Can I use AI to check my grammar?">Can I use AI to check my grammar?</button>
+          <button type="button" class="chip" data-q="Can AI help me outline?">Can AI help me outline?</button>
+          <button type="button" class="chip" data-q="Can AI write my first draft?">Can AI write my first draft?</button>
+        </div>
+        <button type="submit" class="btn btn-primary">Check the policy <span aria-hidden="true">→</span></button>
+      </form>
+
+      <div id="answer-card" class="answer-card" hidden aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- ── AI Coach ────────────────────────────────────────────────────────── -->
+  <section data-view="ai-coach" aria-labelledby="ai-coach-title" hidden>
+    <div class="view-heading">
+      <p class="eyebrow">Student · AI Coach</p>
+      <h1 id="ai-coach-title" tabindex="-1">AI Coach</h1>
+      <p>Describe your assignment. The coach shows good ways to use AI that your course allows, and what to avoid.</p>
+    </div>
+
+    <form class="panel" id="coach-form" novalidate>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="coach-course">Course</label>
+          <select id="coach-course"></select>
+        </div>
+        <div class="form-group">
+          <label for="coach-input">Your assignment, in plain words</label>
+          <input type="text" id="coach-input" autocomplete="off"
+                 placeholder="e.g. research paper on climate change">
+        </div>
+      </div>
+      <div class="chips" aria-label="Example assignments">
+        <button type="button" class="chip" data-coach="engl-111|Research paper on climate change">ENGL 111: research paper</button>
+        <button type="button" class="chip" data-coach="csci-101|Python program for a grade calculator">CSCI 101: Python program</button>
+        <button type="button" class="chip" data-coach="nurs-101|Study for my terminology quiz">NURS 101: quiz prep</button>
+      </div>
+      <button type="submit" class="btn btn-primary">Coach me <span aria-hidden="true">→</span></button>
+      <p class="hint coach-note">The coach uses your course's policy and ready-made prompt templates. It doesn't send anything to an AI service.</p>
+    </form>
+
+    <div id="coach-result" class="coach-result" hidden aria-live="polite"></div>
+  </section>
+
+  <!-- ── AI Literacy (student) ───────────────────────────────────────────── -->
+  <section data-view="literacy" aria-labelledby="literacy-title" hidden>
+    <div class="view-heading">
+      <p class="eyebrow">Student · AI Literacy</p>
+      <h1 id="literacy-title" tabindex="-1">AI Responsible Use micro-certification</h1>
+      <p>Answer 6 real-life scenarios. Get <strong id="pass-mark-label">5 of 6</strong> right to earn your badge.</p>
+    </div>
+
+    <div id="badge-earned" class="panel badge-panel glow-card" hidden></div>
+
+    <form id="quiz-form" class="quiz" novalidate>
+      <ol id="quiz-list" class="quiz-list"></ol>
+      <button type="submit" class="btn btn-primary btn-lg">Check my answers <span aria-hidden="true">→</span></button>
+    </form>
+
+    <div id="quiz-result" class="answer-card" hidden aria-live="polite"></div>
+  </section>
+
+  <!-- ── Projects (both views) ───────────────────────────────────────────── -->
+  <section data-view="projects" aria-labelledby="projects-title" hidden>
+    <div class="view-heading">
+      <p class="eyebrow student-only">Student · Projects</p>
+      <p class="eyebrow instructor-only">Instructor · Projects</p>
+      <h1 id="projects-title" tabindex="-1">Projects</h1>
+      <p class="student-only">Hands-on projects where you can apply your skills, with AI use rules shown up front.</p>
+      <p class="instructor-only">Projects your students can join, and the AI rules that apply to each.</p>
+    </div>
+    <div class="stub-notice panel"><p>Projects are coming next.</p></div>
+  </section>
+
+  <!-- ── Events (student) ────────────────────────────────────────────────── -->
+  <section data-view="events" aria-labelledby="events-title" hidden>
+    <div class="view-heading">
+      <p class="eyebrow">Student · Events</p>
+      <h1 id="events-title" tabindex="-1">Upcoming events</h1>
+      <p>Career, campus, and enrollment events across Ivy Tech.</p>
+    </div>
+    <div class="events-toolbar">
+      <label class="toggle">
+        <input type="checkbox" id="events-mine">
+        <span>Only show events for my program</span>
+      </label>
+      <span class="last-updated" id="events-updated"></span>
+    </div>
+    <ul class="event-list" id="event-list" role="list"></ul>
+    <p class="empty-state" id="events-empty" hidden>No upcoming events match. Turn off the filter to see all events.</p>
+  </section>
+
+  <!-- ── Course Policies (instructor) ────────────────────────────────────── -->
+  <section data-view="policies" aria-labelledby="policies-title" hidden>
+    <div class="view-heading">
+      <p class="eyebrow">Instructor · Course Policies</p>
+      <h1 id="policies-title" tabindex="-1">Course AI policies</h1>
+      <p>What students see for each course. Keep these current so students act on the right rules.</p>
+    </div>
+    <div id="policy-list" class="policy-list"></div>
+  </section>
+
+  <!-- ── AI Literacy Results (instructor) ────────────────────────────────── -->
+  <section data-view="literacy-results" aria-labelledby="results-title" hidden>
+    <div class="view-heading">
+      <p class="eyebrow">Instructor · AI Literacy Results</p>
+      <h1 id="results-title" tabindex="-1">Micro-certification results</h1>
+      <p>Badges are logged automatically when a student passes the scenario check. No survey, no manual tracking.</p>
+    </div>
+    <div id="results" class="results"></div>
+  </section>
+
+</main>
+
+<!-- ── Footer ──────────────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <span>A-Ivy · Ivy Tech Responsible-AI Guide · Sample data only · No personal information stored</span>
+  <button class="btn btn-secondary" id="export-csv-btn" type="button">Export CSV</button>
+</footer>
+
+<!-- ── Status (accessible live region) ─────────────────────────────────────── -->
+<p id="status" class="status-bar" role="status" aria-live="polite" aria-atomic="true"></p>
+
+</body>
+</html>
