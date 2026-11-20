@@ -24,7 +24,11 @@ student guide translate directly to this context.
 3. Chatbot repurposed to answer student questions about AI on assignments
 4. Responsible use tip cards shown per-policy
 5. Small business responsible-AI sidebar — reuses the same framework taught to students
-6. Completed impact statement in IMPACT-STATEMENT.md
+6. Micro-certification quiz data — 10 scenario-based questions (5 universal + 5 by
+   discipline) with 4 options each, correct answer index, and explanation text;
+   exported from model.mjs as `quizScenarios` and ready for the UI once the
+   teammate's redesign is merged
+7. Completed impact statement in IMPACT-STATEMENT.md
 
 ---
 
@@ -307,12 +311,13 @@ benefit small business owners as a secondary impact pathway.
 - [ ] Write the "Prototype" section: describe the AI Guide view, the course-policy
       lookup, the AI-use rubric checklist, the chatbot coaching, and the small business
       callout; note what changed after pilot feedback
-- [ ] Write the "Measurable outcome" section: metric = % of surveyed students who
-      correctly identify what AI use is allowed before submitting an assignment;
-      baseline = 32%, target = 65%, measured via pre/post survey at end of semester
+- [ ] Write the "Measurable outcome" section: metric = badges earned in the pilot
+      semester; baseline = 0; target = 150; auto-logged on scenario quiz completion;
+      secondary metric = 20% of badge earners register for the sponsored external exam
 - [ ] Write the "Statewide rollout" section: pilot at one campus with 3 courses (CIT,
-      ENG, BUS); needs LMS integration and an instructor-facing policy editor; expand
-      when pilot shows ≥ 20 pp improvement
+      ENG, BUS); needs badge infrastructure (Credly/Canvas Badges), LMS policy editor,
+      and an Ivy Tech partnership with an external AI exam provider (Google/IBM);
+      expand when 150 badges issued and ≥ 80% instructor policy-confirmation compliance
 - [ ] Write the "Top risk and mitigation" section: risk = instructors do not keep
       policies up to date; mitigation = semester-start policy confirmation email + LMS
       sync
@@ -333,6 +338,46 @@ Sub-Task 1 → Sub-Task 2 → Sub-Task 3 → Sub-Task 4 → Sub-Task 5 → Sub-T
 ```
 
 Each sub-task can be reviewed and committed independently before moving to the next.
+
+---
+
+### Sub-Task 7 — AI Certification Quiz UI (BLOCKED — waiting on teammate redesign)
+
+**Status:** `[ ] pending`
+
+**Intent:**
+Build the scenario quiz and certificate download UI on top of the teammate's redesigned
+site structure. The quiz data (`quizScenarios`) is already in `model.mjs` and tested.
+This sub-task is intentionally deferred until `git pull` brings in the new design so
+the quiz UI is built once into the final structure, not rebuilt twice.
+
+**Design decisions locked:**
+- 10 questions (5 universal + 5 discipline-based)
+- Pass threshold: 8/10 (80%)
+- Quiz is a standalone "AI Certification" nav section — separate from AI Guide policy lookup
+- Badge panel appears on pass; "Try again" on fail
+- "Download Certificate" button generates a date-stamped text certificate
+- Sponsored exam callout appears below the badge
+
+**Expected Outcomes:**
+- Student can navigate to `#ai-cert` and start the knowledge check
+- Each question shows 4 answer options; selecting one reveals feedback and explanation
+- After question 10, score is shown with pass/fail result
+- On pass (≥ 8/10): badge card + "Download Certificate" button + sponsored exam callout
+- On fail: score shown + "Try again" button that resets to question 1
+- Certificate download produces a `.txt` file with name, date, and "Ivy Tech AI Responsible Use — Certified"
+
+**Todo List (implement after pull):**
+- [ ] Pull teammate's redesigned site (`git pull origin main`)
+- [ ] Create `ai-cert.mjs` importing `quizScenarios` from `model.mjs`
+- [ ] Add `data-view="ai-cert"` section to the new HTML structure
+- [ ] Register `'ai-cert': 'AI Certification'` in `app.mjs` pageNames
+- [ ] Implement quiz state machine: `idle → question[n] → feedback → result → badge/retry`
+- [ ] Implement certificate download (Blob + anchor click, `.txt` format)
+- [ ] Add CSS for quiz card, option buttons, feedback states, badge panel
+- [ ] Add `ai-cert.mjs` to `server.mjs` route map
+- [ ] Add chatbot KB entry for the certification (keywords: `certif`, `quiz`, `badge`, `exam`)
+- [ ] Run all tests and confirm pass
 
 ---
 

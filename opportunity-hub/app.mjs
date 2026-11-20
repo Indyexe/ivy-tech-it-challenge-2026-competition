@@ -541,6 +541,43 @@ function setExamInterest(value) {
   announce(value ? 'Thanks! Your interest in the external exam is recorded.' : 'No problem. You can change this anytime.');
 }
 
+function downloadCertificate(badge) {
+  const date = new Date(badge.ts).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const student = currentStudent();
+  const text = [
+    '================================================',
+    '   IVY TECH COMMUNITY COLLEGE',
+    '   AI Responsible Use Micro-Certification',
+    '================================================',
+    '',
+    `This certifies that ${student.name}`,
+    `successfully completed the`,
+    `${certification.name}`,
+    '',
+    `Date earned: ${date}`,
+    '',
+    'Demonstrated competency in:',
+    '  - Responsible AI use across academic contexts',
+    '  - Academic integrity and AI disclosure',
+    '  - Verifying AI-generated information',
+    '  - Protecting personal and sensitive data',
+    '',
+    '------------------------------------------------',
+    'Prototype certificate · Sample data only',
+    'Not an official Ivy Tech credential',
+    '================================================',
+  ].join('\n');
+  const url = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'AI-Responsible-Use-Certificate.txt';
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  announce('Certificate downloaded.');
+}
+
 function renderBadge() {
   const badge = myBadge();
   badgePanel.hidden = !badge;
@@ -550,6 +587,8 @@ function renderBadge() {
   const no = el('button', { className: `btn ${badge.examInterest === false ? 'btn-primary' : 'btn-secondary'}`, text: 'Not now', attrs: { type: 'button', 'aria-pressed': String(badge.examInterest === false) } });
   yes.addEventListener('click', () => setExamInterest(true));
   no.addEventListener('click', () => setExamInterest(false));
+  const download = el('button', { className: 'btn btn-secondary', text: 'Download certificate ↓', attrs: { type: 'button' } });
+  download.addEventListener('click', () => downloadCertificate(badge));
   badgePanel.replaceChildren(
     el('div', { className: 'badge-row' }, [
       el('div', { className: 'badge-medal', attrs: { 'aria-hidden': 'true' } }, [el('span', { text: '✓' })]),
@@ -557,6 +596,7 @@ function renderBadge() {
         el('p', { className: 'eyebrow', text: 'Badge earned' }),
         el('h2', { text: certification.name }),
         el('p', { className: 'hint', text: `${certification.status} Earned ${new Date(badge.ts).toLocaleDateString()}.` }),
+        download,
       ]),
     ]),
     el('div', { className: 'next-step' }, [

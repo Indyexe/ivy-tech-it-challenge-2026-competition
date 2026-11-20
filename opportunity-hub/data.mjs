@@ -318,7 +318,7 @@ export const coachPrompts = {
 export const certification = {
   name: 'Ivy Tech AI Responsible Use micro-certification',
   status: 'Prototype badge. Not an official Ivy Tech credential.',
-  passMark: 5,              // out of 6 scenarios (about 80%)
+  passMark: 8,              // out of 10 scenarios (80%)
   badgeTarget: 150,         // badges in the first pilot semester
   examConversionTarget: 0.2,
   baseline: 0,
@@ -367,6 +367,34 @@ export const quiz = [
     options: ['Submit it anyway', 'Study the function until you can explain it, and disclose the AI help', 'Remove the comments so it looks like yours'],
     answer: 1,
     explain: 'Only submit work you understand, and disclose AI help when the policy requires it.',
+  },
+  {
+    id: 'q7',
+    scenario: 'You are a student working part-time at a small business. Your manager asks you to use AI to draft a customer email. What is the responsible first step?',
+    options: ['Send the AI draft directly — it will be fine', 'Review the draft carefully and edit it before sending', 'Refuse to use AI at work entirely'],
+    answer: 1,
+    explain: 'AI drafts need a human review before they reach customers. Errors, wrong tone, or inaccurate information reflect on the business.',
+  },
+  {
+    id: 'q8',
+    scenario: 'Your ENGL 111 instructor prohibits AI at all stages of writing. You are stuck on your thesis. Which action is acceptable?',
+    options: ['Ask AI to suggest three thesis statements and pick one', 'Visit the campus Writing Center for help from a human tutor', 'Use AI just for brainstorming since that is not "writing"'],
+    answer: 1,
+    explain: 'When AI is fully prohibited, human resources like writing centers, tutors, and office hours are the right path. Brainstorming with AI is still AI use.',
+  },
+  {
+    id: 'q9',
+    scenario: 'Which of the following is always responsible AI use, regardless of the course policy?',
+    options: ['Using AI to write your entire first draft', 'Being able to explain and defend every part of your submitted work', 'Keeping your AI use secret to avoid judgment'],
+    answer: 1,
+    explain: 'Regardless of what a policy allows, you must own your work. If you cannot explain or defend any part of it, that is a problem — in academics and in professional life.',
+  },
+  {
+    id: 'q10',
+    scenario: 'You used AI to summarize three articles for your BUSN 101 paper. Your instructor requires citing all sources. What do you include in your reference list?',
+    options: ['Only the three original articles — the AI was just a tool', 'A citation for the AI tool including the tool name, date, and prompt used', 'Nothing extra — summarizing does not require citation'],
+    answer: 1,
+    explain: 'When a course requires citing AI, treat it like any other source: name the tool, the date you used it, and what you asked it.',
   },
 ];
 

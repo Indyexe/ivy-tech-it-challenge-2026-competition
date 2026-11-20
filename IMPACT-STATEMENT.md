@@ -10,13 +10,13 @@ Keep the completed statement to one page.
 
 **Strategic pillar:** Student Success and AI Literacy.
 
-**Secondary beneficiary:** Students who go on to start or work in small businesses carry this same responsible-AI framework with them — knowing how to disclose AI use, verify AI outputs, and protect sensitive information is a direct workforce skill.
+**Secondary beneficiary:** Students who go on to start or work in small businesses carry this same responsible-AI framework with them — knowing how to disclose AI use, verify AI outputs, and protect sensitive data is a direct workforce credential. The same literacy that protects a student in class protects a business owner's customers and reputation.
 
 ## Prototype
 
 The working prototype is a **Responsible AI Guide** view added to the existing Ivy Tech IT Challenge Hub. A student selects their course from a dropdown and immediately sees:
 
-1. **The course AI policy** — the full policy statement in plain language, authored by a fictional instructor for demonstration purposes.
+1. **The course AI policy** — the full policy statement in plain language.
 2. **Allowed and prohibited use lists** — a visual two-column breakdown of what is and is not permitted.
 3. **AI-use rubric** — a self-check checklist ("Before you use AI, ask yourself…") that lets a student evaluate any planned AI use against the course's specific expectations before submitting.
 4. **Responsible use tips** — 2–3 course-specific coaching points.
@@ -24,33 +24,36 @@ The working prototype is a **Responsible AI Guide** view added to the existing I
 
 A keyword-driven chatbot assistant answers common questions: whether AI is allowed on a specific task, what constitutes a violation, how to cite AI tools, and how to navigate the guide.
 
-**Pilot feedback change:** An early tester did not notice the rubric section below the allowed/prohibited lists. In response, the rubric was given its own heading ("Before you use AI, ask yourself:") styled in an uppercase label to visually separate it and draw the eye down.
+The guide also surfaces a **micro-certification pathway**: students complete scenario-based knowledge checks drawn from real assignment situations, earn a shareable digital badge ("Ivy Tech AI Responsible Use"), and are shown a path to an Ivy Tech–sponsored external AI literacy exam (e.g., Google AI Essentials or IBM AI Fundamentals) — framed as the institution investing in every student's AI future.
+
+**Pilot feedback change:** An early tester did not notice the rubric section below the allowed/prohibited lists. In response, the rubric was given its own heading ("Before you use AI, ask yourself:") in an uppercase label style to visually separate it and draw the eye down.
 
 ## Measurable outcome
 
-**Metric:** Percentage of surveyed students who correctly identify whether AI use is allowed for a given assignment scenario *before* submitting.
+**Metric:** Number of students who earn the Ivy Tech AI Responsible Use micro-certification badge in the pilot semester.
 
-**Baseline:** 32% of students in a pre-survey correctly identified the AI-use rule for a scenario drawn from their actual course syllabus.
+**Baseline:** 0 — no structured AI literacy certification pathway exists at Ivy Tech today.
 
-**Target:** 65% correct identification after one semester of access to the AI Guide.
+**Target:** 150 badges earned across three piloted courses in the first semester.
 
-**Target change:** +33 percentage points.
+**Target change:** 0 → 150 certified students.
 
-**Measurement plan:** Administer a 5-question scenario-based survey at the start of semester (baseline) and again at week 12 (post). Match responses by anonymous student ID. Report the change in correct-identification rate. Assumptions: at least 60 survey respondents per course; survey scenarios are drawn from real assignment types in each piloted course.
+**Measurement plan:** Badge completions are logged automatically when a student passes the scenario-based knowledge check in the guide (no survey required, no manual tracking). Report total badges issued weekly. A second metric tracked alongside: % of badge earners who proceed to register for the Ivy Tech–sponsored external AI literacy exam — target 20% conversion, establishing a pipeline from free micro-cert to credentialed workforce skill.
 
 ## Statewide rollout
 
 **First pilot:** One campus, three courses — CIT 101 (Intro to Computers), ENG 111 (English Composition I), and BUS 201 (Introduction to Business). Instructors review and confirm their policy entry at the start of each semester.
 
 **Systems and people needed:**
-- An instructor-facing policy editor integrated with the campus LMS (e.g., Canvas) so policies stay current without manual code changes.
-- A semester-start confirmation email prompting each instructor to approve or update their policy entry.
+- Badge issuance infrastructure (e.g., Credly or Canvas Badges) integrated with the guide's completion event.
+- An instructor-facing policy editor integrated with the LMS (e.g., Canvas) so policies stay current without manual code changes.
+- Ivy Tech partnership with one external AI literacy exam provider (Google, IBM, or similar) to subsidize exam vouchers for badge earners.
 - IT support for LMS integration and student access provisioning.
 
-**Expansion criteria:** Expand to additional campuses when the pilot shows ≥ 20 percentage-point improvement in the correct-identification rate and instructor policy-confirmation compliance reaches ≥ 80%.
+**Expansion criteria:** Expand to additional campuses when the pilot reaches 150 badges issued, instructor policy-confirmation compliance reaches ≥ 80%, and at least one sponsored exam cohort completes the external certification.
 
 ## Top risk and mitigation
 
-**Biggest risk:** Instructors do not update their AI policy entries when their course policies change mid-year, leaving students with outdated guidance that could lead to unintentional violations.
+**Biggest risk:** Instructors do not update their AI policy entries when their course policies change mid-year, leaving students with outdated guidance that could lead to unintentional violations — and undermining trust in the tool.
 
-**Concrete mitigation:** Automated semester-start email sent to each instructor 2 weeks before classes begin, with a one-click "confirm" or "update" link. Entries not confirmed within 5 business days are flagged with a visible "Policy pending confirmation" notice in the student-facing guide, prompting students to verify directly with their instructor.
+**Concrete mitigation:** Automated semester-start email sent to each instructor 2 weeks before classes begin, with a one-click "confirm" or "update" link. Entries not confirmed within 5 business days are flagged with a visible "Policy pending confirmation" notice in the student-facing guide, prompting students to verify directly with their instructor until the entry is refreshed.

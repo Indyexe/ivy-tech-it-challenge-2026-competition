@@ -177,19 +177,19 @@ test('coachPlan — flags disclosure when a suggested use needs it', () => {
 
 // ─── AI Literacy ─────────────────────────────────────────────────────────────
 
-test('scoreQuiz — all correct passes; 4 of 6 fails at a pass mark of 5', () => {
+test('scoreQuiz — all correct passes; 7 of 10 fails at a pass mark of 8', () => {
   const perfect = quiz.map((q) => q.answer);
-  assert.deepEqual(scoreQuiz(quiz, perfect, certification.passMark), { correct: 6, total: 6, passed: true, missed: [] });
-  const fourRight = perfect.map((a, i) => (i < 2 ? (a + 1) % 3 : a));
-  const result = scoreQuiz(quiz, fourRight, certification.passMark);
-  assert.equal(result.correct, 4);
+  assert.deepEqual(scoreQuiz(quiz, perfect, certification.passMark), { correct: 10, total: 10, passed: true, missed: [] });
+  const sevenRight = perfect.map((a, i) => (i < 3 ? (a + 1) % 3 : a));
+  const result = scoreQuiz(quiz, sevenRight, certification.passMark);
+  assert.equal(result.correct, 7);
   assert.equal(result.passed, false);
-  assert.deepEqual(result.missed, ['q1', 'q2']);
+  assert.deepEqual(result.missed, ['q1', 'q2', 'q3']);
 });
 
 test('scoreQuiz — exactly the pass mark passes; unanswered counts as wrong', () => {
-  const fiveRight = quiz.map((q, i) => (i === 0 ? undefined : q.answer));
-  assert.equal(scoreQuiz(quiz, fiveRight, 5).passed, true);
+  const eightRight = quiz.map((q, i) => (i === 0 || i === 1 ? undefined : q.answer));
+  assert.equal(scoreQuiz(quiz, eightRight, 8).passed, true);
 });
 
 test('badgeMetrics — totals sample weeks, adds live badges, and computes conversion', () => {
