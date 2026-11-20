@@ -175,8 +175,10 @@
     <div class="view-heading">
       <p class="eyebrow">Student · AI Literacy</p>
       <h1 id="literacy-title" tabindex="-1">AI Responsible Use micro-certification</h1>
-      <p>Answer 6 real-life scenarios. Get <strong id="pass-mark-label">5 of 6</strong> right to earn your badge.</p>
+      <p>Answer <span id="quiz-count">10</span> real-life scenarios. Get <strong id="pass-mark-label">8 of 10</strong> right to earn your badge.</p>
     </div>
+
+    <ol class="feature-grid" id="literacy-path" aria-label="Your AI literacy path"></ol>
 
     <div id="badge-earned" class="panel badge-panel glow-card" hidden></div>
 
@@ -194,10 +196,55 @@
       <p class="eyebrow student-only">Student · Projects</p>
       <p class="eyebrow instructor-only">Instructor · Projects</p>
       <h1 id="projects-title" tabindex="-1">Projects</h1>
-      <p class="student-only">Hands-on projects where you can apply your skills, with AI use rules shown up front.</p>
-      <p class="instructor-only">Projects your students can join, and the AI rules that apply to each.</p>
+      <p class="student-only">Upload your project work and say honestly how you used AI. Your course's AI rules are shown as you go.</p>
+      <p class="instructor-only">Projects your students uploaded, with their AI-use notes.</p>
     </div>
-    <div class="stub-notice panel"><p>Projects are coming next.</p></div>
+
+    <!-- Student: upload form -->
+    <form class="panel upload-form student-only" id="project-form" novalidate>
+      <h2>Upload a project</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="project-title">Project title</label>
+          <input type="text" id="project-title" maxlength="120" autocomplete="off" placeholder="e.g. Grade calculator in Python">
+        </div>
+        <div class="form-group">
+          <label for="project-course">Course</label>
+          <select id="project-course"></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="project-description">Short description</label>
+        <textarea id="project-description" rows="3" maxlength="600" placeholder="What did you build or write, and what skills did you use?"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="project-file">Project file</label>
+        <input type="file" id="project-file" class="file-input"
+               accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.md,.csv,.xlsx,.zip,.png,.jpg,.jpeg,.py,.js,.html,.css,.java"
+               aria-describedby="project-file-hint">
+        <p class="hint" id="project-file-hint">PDF, Office, image, code, or ZIP. Files up to <span id="project-max-size">2 MB</span> are saved on this device so you can download them later.</p>
+      </div>
+
+      <fieldset class="form-group ai-use">
+        <legend>Did you use AI on this project?</legend>
+        <label class="toggle"><input type="radio" name="project-ai" value="no" checked> <span>No</span></label>
+        <label class="toggle"><input type="radio" name="project-ai" value="yes"> <span>Yes</span></label>
+      </fieldset>
+      <div class="form-group" id="project-ai-detail" hidden>
+        <label for="project-ai-text">How did you use AI?</label>
+        <textarea id="project-ai-text" rows="2" maxlength="400" placeholder="e.g. I used an AI tool to explain an error message. All code is my own."></textarea>
+        <div id="project-ai-rules" class="ai-rules"></div>
+      </div>
+
+      <p class="hint privacy-note">Don't upload anyone else's personal information. Prototype: uploads stay in this browser only.</p>
+      <button type="submit" class="btn btn-primary">Upload project <span aria-hidden="true">↑</span></button>
+    </form>
+
+    <h2 class="list-heading student-only">My projects</h2>
+    <h2 class="list-heading instructor-only">Student uploads</h2>
+    <ul class="project-list" id="project-list" role="list"></ul>
+    <p class="empty-state" id="project-empty" hidden>No projects uploaded yet.</p>
   </section>
 
   <!-- ── Events (student) ────────────────────────────────────────────────── -->

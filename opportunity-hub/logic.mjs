@@ -303,6 +303,33 @@ export function upcomingEvents(events, todayIso, programTag = null) {
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 
+// ─── Project uploads ─────────────────────────────────────────────────────────
+
+/** Human-readable file size, e.g. 1536 → "1.5 KB". */
+export function formatBytes(bytes) {
+  if (!Number.isFinite(bytes) || bytes < 0) return '';
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1).replace(/\.0$/, '')} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1).replace(/\.0$/, '')} MB`;
+}
+
+/**
+ * Check a project upload before saving.
+ * Returns a list of problems (empty = OK) and whether the file is small
+ * enough to keep a downloadable copy on this device.
+ *
+ * @param {{ title: string, usedAI: boolean, aiUse: string, file: {name: string, size: number} | null }} upload
+ * @param {number} maxStoreBytes
+ */
+export function validateUpload(upload, maxStoreBytes) {
+  const errors = [];
+  if (!upload?.title?.trim()) errors.push('Add a project title.');
+  if (!upload?.file) errors.push('Choose a file to upload.');
+  if (upload?.usedAI && !upload.aiUse?.trim()) errors.push('Describe how you used AI.');
+  const storeCopy = Boolean(upload?.file) && upload.file.size <= maxStoreBytes;
+  return { ok: errors.length === 0, errors, storeCopy };
+}
+
 /** 'YYYY-MM-DD' for a Date in local time. */
 export function isoDate(date) {
   const pad = (n) => String(n).padStart(2, '0');

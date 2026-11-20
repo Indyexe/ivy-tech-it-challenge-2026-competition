@@ -11,7 +11,7 @@ import {
 import {
   matchQuestion, disclosureNote, emailDraft, filterCourses, ruleSummary,
   allowedAlternatives, toCsv, coachPlan, scoreQuiz, badgeMetrics,
-  upcomingEvents, isoDate,
+  upcomingEvents, isoDate, formatBytes, validateUpload,
 } from './logic.mjs';
 
 const byId = (id) => document.getElementById(id);
@@ -37,6 +37,7 @@ function emptyDraft() {
     studentId: 'student-alex',
     instructorId: 'instructor-morgan',
     badgeLog: [],   // { ts, studentId, examInterest }
+    projects: [],   // { id, ts, studentId, title, courseId, description, usedAI, aiUse, fileName, fileType, fileSize, fileData }
   };
 }
 
@@ -47,6 +48,7 @@ function loadDraft() {
       const merged = { ...emptyDraft(), ...saved };
       if (!['student', 'instructor'].includes(merged.role)) merged.role = 'student';
       if (!Array.isArray(merged.badgeLog)) merged.badgeLog = [];
+      if (!Array.isArray(merged.projects)) merged.projects = [];
       return merged;
     }
   } catch { /* storage unavailable or corrupt */ }
@@ -55,12 +57,15 @@ function loadDraft() {
 
 let draft = loadDraft();
 
-function saveDraft(update) {
+/** Save to memory and browser storage. Returns false if storage failed (blocked or full). */
+function saveDraft(update, { quiet = false } = {}) {
   draft = { ...draft, ...update };
   try {
     localStorage.setItem(storageKey, JSON.stringify(draft));
+    return true;
   } catch {
-    announce('Browser storage is blocked. Changes last until you close this tab.');
+    if (!quiet) announce('Browser storage is blocked or full. Changes last until you close this tab.');
+    return false;
   }
 }
 
@@ -130,6 +135,7 @@ function renderRoute(route) {
   if (route === 'literacy') renderLiteracy();
   if (route === 'literacy-results') renderResults();
   if (route === 'policies') renderPolicies();
+  if (route === 'projects') renderProjects();
 }
 
 window.addEventListener('hashchange', () => {
@@ -517,6 +523,31 @@ const quizList = byId('quiz-list');
 const quizResult = byId('quiz-result');
 const badgePanel = byId('badge-earned');
 byId('pass-mark-label').textContent = `${certification.passMark} of ${quiz.length}`;
+byId('quiz-count').textContent = String(quiz.length);
+
+const examList = (certification.externalExams ?? []).join(' or ');
+
+// The path is visible BEFORE the quiz, so students see what they can earn.
+byId('literacy-path').replaceChildren(
+  ...[
+    ['1', 'Pass the knowledge check', `${quiz.length} scenario questions. Get ${certification.passMark} right.`],
+    ['2', 'Earn a shareable badge', `"${certification.name}" digital badge, plus a certificate you can download and share.`],
+    ['3', 'Go further', `Get a path to an Ivy Tech–sponsored external AI literacy exam${examList ? ` (e.g., ${examList})` : ''}.`],
+  ].map(([step, title, body]) => el('li', { className: 'feature-card glow-card' }, [
+    el('span', { className: 'feature-step', text: step, attrs: { 'aria-hidden': 'true' } }),
+    el('h2', { text: title }),
+    el('p', { text: body }),
+  ])),
+);
+
+function shareBadge(badge) {
+  const text = `I earned the ${certification.name} badge (${new Date(badge.ts).toLocaleDateString()}) on A-Ivy, Ivy Tech's Responsible-AI Guide. (Prototype badge)`;
+  if (navigator.share) {
+    navigator.share({ title: certification.name, text }).catch(() => {});
+  } else {
+    copyText(text, 'Badge share text');
+  }
+}
 
 function myBadge() {
   return draft.badgeLog.find((b) => b.studentId === currentStudent().id);
@@ -589,6 +620,8 @@ function renderBadge() {
   no.addEventListener('click', () => setExamInterest(false));
   const download = el('button', { className: 'btn btn-secondary', text: 'Download certificate ↓', attrs: { type: 'button' } });
   download.addEventListener('click', () => downloadCertificate(badge));
+  const share = el('button', { className: 'btn btn-secondary', text: 'Share badge', attrs: { type: 'button' } });
+  share.addEventListener('click', () => shareBadge(badge));
   badgePanel.replaceChildren(
     el('div', { className: 'badge-row' }, [
       el('div', { className: 'badge-medal', attrs: { 'aria-hidden': 'true' } }, [el('span', { text: '✓' })]),
@@ -596,11 +629,12 @@ function renderBadge() {
         el('p', { className: 'eyebrow', text: 'Badge earned' }),
         el('h2', { text: certification.name }),
         el('p', { className: 'hint', text: `${certification.status} Earned ${new Date(badge.ts).toLocaleDateString()}.` }),
-        download,
+        el('div', { className: 'btn-row' }, [download, share]),
       ]),
     ]),
     el('div', { className: 'next-step' }, [
-      el('p', { className: 'next-step-title', text: 'Next step: interested in the Ivy Tech–sponsored external AI literacy exam?' }),
+      el('p', { className: 'next-step-title', text: 'Next step: interested in an Ivy Tech–sponsored external AI literacy exam?' }),
+      examList ? el('p', { className: 'hint', text: `For example: ${examList}. Ivy Tech invests in your AI future.` }) : null,
       el('div', { className: 'btn-row' }, [yes, no]),
     ]),
   );
@@ -620,7 +654,7 @@ quizForm.addEventListener('submit', (event) => {
   const unanswered = answers.findIndex((a) => a === undefined);
   if (unanswered !== -1) {
     announce(`Answer scenario ${unanswered + 1} first.`);
-    quizForm.querySelector(`input[name="${quiz[unanswered].id}"]`).focus();
+    quizForm.querySelector(`input[name="${quiz[unanswered].id}"]`)?.focus();
     return;
   }
 
@@ -755,6 +789,157 @@ function renderResults() {
       el('p', { className: 'hint', text: 'Weeks 1–4 are labeled sample pilot data across three courses. "This device" shows real badges earned in this browser.' }),
     ]),
   );
+}
+
+// ═══ PROJECTS: upload (student) and review (instructor) ══════════════════════
+
+const MAX_STORE_BYTES = 2 * 1024 * 1024;   // keep a downloadable copy up to 2 MB
+const projectForm = byId('project-form');
+const projectCourse = byId('project-course');
+const projectFile = byId('project-file');
+const projectAiDetail = byId('project-ai-detail');
+const projectAiRules = byId('project-ai-rules');
+byId('project-max-size').textContent = formatBytes(MAX_STORE_BYTES);
+
+projectCourse.replaceChildren(...sortedCourses(courses).map((c) => el('option', { text: c.name, attrs: { value: c.id } })));
+
+function usedAIValue() {
+  return projectForm.querySelector('input[name="project-ai"]:checked')?.value === 'yes';
+}
+
+// When the student says they used AI, show that course's rules right there.
+function renderProjectRules() {
+  const used = usedAIValue();
+  projectAiDetail.hidden = !used;
+  if (!used) return;
+  const course = courses.find((c) => c.id === projectCourse.value);
+  if (!course) return;
+  const needsDisclosure = course.usages.some((u) => u.rule === 'disclosure');
+  projectAiRules.replaceChildren(
+    el('p', { className: 'next-step-title', text: `AI rules for ${splitName(course).code}:` }),
+    trafficList(course),
+    needsDisclosure ? el('p', { className: 'hint', text: 'This course requires you to disclose AI use. Your note above will be saved with the project.' }) : null,
+  );
+}
+
+projectForm.addEventListener('change', (event) => {
+  if (event.target.name === 'project-ai' || event.target === projectCourse) renderProjectRules();
+});
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+projectForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const file = projectFile.files[0] ?? null;
+  const upload = {
+    title: byId('project-title').value.trim(),
+    description: byId('project-description').value.trim(),
+    courseId: projectCourse.value,
+    usedAI: usedAIValue(),
+    aiUse: byId('project-ai-text').value.trim(),
+    file,
+  };
+  const check = validateUpload(upload, MAX_STORE_BYTES);
+  if (!check.ok) {
+    announce(check.errors[0]);
+    if (!upload.title) byId('project-title').focus();
+    else if (!file) projectFile.focus();
+    else byId('project-ai-text').focus();
+    return;
+  }
+
+  let fileData = null;
+  if (check.storeCopy) {
+    try { fileData = await readFileAsDataUrl(file); } catch { fileData = null; }
+  }
+  const project = {
+    id: `p-${Date.now()}`,
+    ts: new Date().toISOString(),
+    studentId: currentStudent().id,
+    title: upload.title,
+    courseId: upload.courseId,
+    description: upload.description,
+    usedAI: upload.usedAI,
+    aiUse: upload.usedAI ? upload.aiUse : '',
+    fileName: file.name,
+    fileType: file.type,
+    fileSize: file.size,
+    fileData,
+  };
+
+  // If the browser runs out of storage, keep the details but drop the file copy.
+  let saved = saveDraft({ projects: [project, ...draft.projects] }, { quiet: true });
+  if (!saved && fileData) {
+    project.fileData = null;
+    saved = saveDraft({ projects: [project, ...draft.projects.filter((p) => p.id !== project.id)] }, { quiet: true });
+  }
+
+  projectForm.reset();
+  renderProjectRules();
+  renderProjects();
+  announce(saved
+    ? (project.fileData ? 'Project uploaded.' : 'Project uploaded. The file was too large to keep a copy on this device.')
+    : 'Project added for this session. Browser storage is full or blocked.');
+});
+
+function downloadProjectFile(project) {
+  if (!project.fileData) return;
+  const link = el('a', { attrs: { href: project.fileData, download: project.fileName } });
+  document.body.append(link);
+  link.click();
+  link.remove();
+}
+
+function deleteProject(project) {
+  if (!window.confirm(`Delete "${project.title}" from this device? This can't be undone.`)) return;
+  saveDraft({ projects: draft.projects.filter((p) => p.id !== project.id) });
+  renderProjects();
+  announce('Project deleted.');
+}
+
+function renderProjects() {
+  const isInstructor = draft.role === 'instructor';
+  const list = isInstructor
+    ? draft.projects
+    : draft.projects.filter((p) => p.studentId === currentStudent().id);
+
+  byId('project-list').replaceChildren(...list.map((p) => {
+    const course = courses.find((c) => c.id === p.courseId);
+    const student = demoStudents.find((s) => s.id === p.studentId);
+    const actions = [];
+    if (p.fileData) {
+      const dl = el('button', { className: 'btn btn-secondary btn-sm', text: 'Download file ↓', attrs: { type: 'button' } });
+      dl.addEventListener('click', () => downloadProjectFile(p));
+      actions.push(dl);
+    }
+    if (!isInstructor) {
+      const del = el('button', { className: 'btn btn-ghost btn-sm', text: 'Delete', attrs: { type: 'button' } });
+      del.addEventListener('click', () => deleteProject(p));
+      actions.push(del);
+    }
+    return el('li', { className: 'project-card glow-card' }, [
+      el('div', { className: 'card-header' }, [
+        el('h3', { text: p.title }),
+        el('span', { className: 'last-updated', text: new Date(p.ts).toLocaleDateString() }),
+      ]),
+      el('p', { className: 'event-meta', text: [course ? splitName(course).code : null, isInstructor && student ? `${student.name} (demo)` : null].filter(Boolean).join(' · ') }),
+      p.description ? el('p', { text: p.description }) : null,
+      el('p', { className: 'file-meta', text: `📎 ${p.fileName} · ${formatBytes(p.fileSize)}${p.fileData ? '' : ' · no copy saved'}` }),
+      p.usedAI
+        ? el('p', { className: 'tip ai-note', text: `AI use: ${p.aiUse}` })
+        : el('p', { className: 'hint', text: 'No AI used.' }),
+      actions.length ? el('div', { className: 'btn-row' }, actions) : null,
+    ]);
+  }));
+  byId('project-empty').hidden = list.length > 0;
+  byId('project-empty').textContent = isInstructor ? 'No student uploads yet.' : 'No projects uploaded yet.';
 }
 
 // ─── Init ────────────────────────────────────────────────────────────────────

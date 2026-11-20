@@ -8,7 +8,7 @@ import test from 'node:test';
 import {
   matchQuestion, hasKeyword, filterCourses, ruleSummary, allowedAlternatives,
   disclosureNote, emailDraft, toCsv, detectTask, extractTopic, coachPlan,
-  scoreQuiz, badgeMetrics, upcomingEvents, isoDate,
+  scoreQuiz, badgeMetrics, upcomingEvents, isoDate, formatBytes, validateUpload,
 } from './logic.mjs';
 import {
   courses, coachTaskTypes, coachPrompts, quiz, certification, samplePilotWeeks, events,
@@ -231,4 +231,25 @@ test('upcomingEvents — program filter keeps "all" events and matching ones', (
 
 test('isoDate — formats a local date as YYYY-MM-DD', () => {
   assert.equal(isoDate(new Date(2026, 10, 20)), '2026-11-20');
+});
+
+// ─── Project uploads ─────────────────────────────────────────────────────────
+
+test('formatBytes — readable sizes', () => {
+  assert.equal(formatBytes(500), '500 B');
+  assert.equal(formatBytes(1536), '1.5 KB');
+  assert.equal(formatBytes(2 * 1024 * 1024), '2 MB');
+});
+
+test('validateUpload — needs a title and a file; AI use needs a description', () => {
+  const file = { name: 'calc.py', size: 1200 };
+  assert.deepEqual(validateUpload({ title: 'Calc', usedAI: false, aiUse: '', file }, 2048).errors, []);
+  assert.ok(validateUpload({ title: ' ', usedAI: false, file }, 2048).errors.includes('Add a project title.'));
+  assert.ok(validateUpload({ title: 'Calc', usedAI: false, file: null }, 2048).errors.includes('Choose a file to upload.'));
+  assert.ok(validateUpload({ title: 'Calc', usedAI: true, aiUse: '', file }, 2048).errors.includes('Describe how you used AI.'));
+});
+
+test('validateUpload — only keeps a copy of files under the size limit', () => {
+  assert.equal(validateUpload({ title: 'A', file: { name: 'a', size: 100 } }, 2048).storeCopy, true);
+  assert.equal(validateUpload({ title: 'A', file: { name: 'a', size: 5000 } }, 2048).storeCopy, false);
 });

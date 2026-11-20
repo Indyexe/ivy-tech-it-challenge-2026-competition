@@ -323,6 +323,8 @@ export const certification = {
   examConversionTarget: 0.2,
   baseline: 0,
   baselineNote: 'No structured AI literacy certification pathway exists at Ivy Tech today.',
+  // Examples of external exams Ivy Tech could sponsor (pathway framing; not a confirmed partnership)
+  externalExams: ['Google AI Essentials', 'IBM AI Fundamentals'],
 };
 
 export const quiz = [

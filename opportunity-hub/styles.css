@@ -649,6 +649,52 @@ textarea { resize: vertical; min-height: 96px; }
 .data-table th, .data-table td { text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); white-space: nowrap; }
 .data-table thead th { color: var(--muted); font-weight: 600; font-size: 0.82rem; }
 
+/* ─── Projects: upload + list ──────────────────────────────────────────────── */
+.upload-form h2 { margin-bottom: 1rem; }
+.file-input {
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--muted);
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0.55rem;
+  background: var(--surface-2);
+  border: 1.5px dashed var(--border-2);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.file-input:hover, .file-input:focus { border-color: var(--emerald-lt); }
+.file-input::file-selector-button {
+  font: inherit;
+  font-weight: 650;
+  color: #fff;
+  background: var(--emerald);
+  border: 0;
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+  margin-right: 0.75rem;
+  cursor: pointer;
+}
+.ai-use { border: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 1.25rem; }
+.ai-use legend { font-size: 0.92rem; font-weight: 600; width: 100%; margin-bottom: 0.25rem; }
+.ai-rules { margin-top: 0.75rem; }
+.privacy-note { margin: 0.25rem 0 1rem; }
+.list-heading { margin: 2rem 0 0.75rem; }
+.project-list { list-style: none; display: grid; gap: 0.75rem; }
+.project-card {
+  background: rgba(19, 33, 60, 0.82);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  display: grid;
+  gap: 0.35rem;
+}
+.project-card .card-header { margin-bottom: 0; }
+.project-card > p:not(.event-meta):not(.hint):not(.tip):not(.file-meta) { color: var(--muted); }
+.file-meta { font-size: 0.88rem; color: var(--text); word-break: break-word; }
+.ai-note { margin-top: 0.25rem; }
+.ai-note::before { content: none; }
+
 /* ─── Tablet & phone ───────────────────────────────────────────────────────── */
 @media (max-width: 860px) {
   .feature-grid { grid-template-columns: 1fr; }
