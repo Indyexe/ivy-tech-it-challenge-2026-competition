@@ -1,6 +1,7 @@
 # Ivy Tech IT Challenge 2026 — Responsible AI Guide
 
 **Track:** Data Analytics, Applied AI & Informatics
+**Team:** Collin, Kaleb, Ryan, Lois
 
 ---
 
