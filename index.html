@@ -10,6 +10,7 @@
   <script type="module" src="app.mjs"></script>
   <script type="module" src="starfield.mjs"></script>
   <script type="module" src="chatbot.mjs"></script>
+  <script type="module" src="ai-guide.mjs"></script>
 </head>
 <body>
   <canvas class="starfield" id="starfield" aria-hidden="true"></canvas>
@@ -18,6 +19,7 @@
     <a class="brand" href="#overview"><span class="brand-mark" aria-hidden="true">✦</span><span>Ivy Tech<small>IT CHALLENGE HUB</small></span></a>
     <nav aria-label="Workspace">
       <a href="#overview"><span aria-hidden="true">⊞</span> Hub</a>
+      <a href="#ai-guide">AI Guide</a>
       <a href="#analytics">Analytics</a>
       <a href="#roadmap">Roadmap</a>
       <a href="#about">About</a>
@@ -217,6 +219,30 @@
         </div>
       </section>
 
+      <section data-view="ai-guide" aria-labelledby="ai-guide-title" hidden>
+        <div class="report-header">
+          <div><p class="eyebrow">STUDENT AI LITERACY</p><h1 id="ai-guide-title" tabindex="-1">Responsible AI Guide</h1><p>Select a course to see its AI policy, check whether your planned use is allowed, and get tips for responsible practice.</p></div>
+        </div>
+
+        <div class="panel ai-guide-selector">
+          <label for="course-select"><strong>Select a course</strong></label>
+          <select id="course-select" class="course-select">
+            <option value="">— Select a course —</option>
+          </select>
+        </div>
+
+        <div id="policy-card"></div>
+        <div id="tips-panel"></div>
+
+        <div class="callout" data-reveal>
+          <span class="callout-mark" aria-hidden="true">✦</span>
+          <div>
+            <h3>Beyond the Classroom</h3>
+            <p>The same responsible-AI principles you practice here — disclose, verify, and think critically — apply directly to adopting AI tools in a small business. Understanding what AI can and cannot do, and how to use it ethically, is a workforce skill that travels with you.</p>
+          </div>
+        </div>
+      </section>
+
       <footer>Ivy Tech IT Challenge <span>Data Analytics, Applied AI &amp; Informatics</span></footer>
     </div>
   </main>
@@ -259,10 +285,10 @@
     </div>
 
     <div class="chat-suggestions" id="chat-suggestions" aria-label="Quick questions">
-      <button type="button" class="chat-suggestion" data-q="What is the IT Challenge?">What is the IT Challenge?</button>
-      <button type="button" class="chat-suggestion" data-q="How do I get started?">How do I get started?</button>
-      <button type="button" class="chat-suggestion" data-q="What are the phases?">What are the phases?</button>
-      <button type="button" class="chat-suggestion" data-q="Who is on the team?">Who is on the team?</button>
+      <button type="button" class="chat-suggestion" data-q="Can I use AI on my homework?">Can I use AI on my homework?</button>
+      <button type="button" class="chat-suggestion" data-q="What is an integrity violation?">What is an integrity violation?</button>
+      <button type="button" class="chat-suggestion" data-q="How do I cite AI tools?">How do I cite AI tools?</button>
+      <button type="button" class="chat-suggestion" data-q="How do I use the AI Guide?">How do I use the AI Guide?</button>
     </div>
 
     <form class="chat-input-row" id="chat-form" autocomplete="off">

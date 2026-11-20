@@ -7,6 +7,7 @@ const files = new Map([
   ['/app.mjs', 'text/javascript; charset=utf-8'],
   ['/starfield.mjs', 'text/javascript; charset=utf-8'],
   ['/chatbot.mjs', 'text/javascript; charset=utf-8'],
+  ['/ai-guide.mjs', 'text/javascript; charset=utf-8'],
   ['/model.mjs', 'text/javascript; charset=utf-8'],
   ['/orbital-horizon.webp', 'image/webp'],
   ['/BOB-LOG.md', 'text/plain; charset=utf-8'],

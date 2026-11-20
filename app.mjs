@@ -3,7 +3,7 @@ import { impactStatement, sampleWeeks, summarizeWeeks } from './model.mjs';
 // Keep the original key so previously saved drafts still load.
 const storageKey = 'ivy-tech-2030-starter-v1';
 const pageNames = {
-  overview: 'Hub', analytics: 'Analytics', roadmap: 'Roadmap', about: 'About',
+  overview: 'Hub', 'ai-guide': 'AI Guide', analytics: 'Analytics', roadmap: 'Roadmap', about: 'About',
   define: 'Define', build: 'Build', iterate: 'Iterate', impact: 'Present',
 };
 const byId = (id) => document.getElementById(id);

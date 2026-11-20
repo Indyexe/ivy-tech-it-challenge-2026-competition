@@ -1,85 +1,50 @@
 /**
- * chatbot.mjs — Futuristic Help Chatbot for the Ivy Tech IT Challenge Hub
+ * chatbot.mjs — Responsible AI Guide Chatbot
  * Keyword-driven response engine with typing indicator and smooth animations.
  */
 
 // ── Knowledge base ────────────────────────────────────────────────────────────
 const KB = [
   {
-    keys: ['what is', 'it challenge', 'about', 'hub', 'overview'],
+    keys: ['can i use', 'chatgpt', 'allowed', 'homework', 'assignment', 'permitted'],
     answer:
-      'The **Ivy Tech IT Challenge** is a team competition in the Data Analytics, Applied AI & Informatics track. Your team frames a real problem, builds a prototype with IBM Bob, runs a pilot, and presents measurable impact to judges.',
+      'Whether you can use AI depends on your specific course. **Open the AI Guide**, select your course from the dropdown, and check the Allowed and Not Permitted lists for that class.\n\nAs a general rule: always disclose AI use, make sure the work reflects your own thinking, and when in doubt — ask your instructor before submitting.',
   },
   {
-    keys: ['get started', 'start', 'begin', 'first step', 'how do'],
+    keys: ['violation', 'integrity', 'academic', 'cheating', 'rules', 'policy'],
     answer:
-      'Start with **Phase 01 — Define**. Agree on one strategic pillar, one person you serve, and one measurable outcome. Then fill in the scope form and move through Build → Iterate → Present.',
+      'An **academic integrity violation** related to AI typically means:\n\n• Submitting AI-generated work as entirely your own\n• Using AI on an assignment where it is explicitly prohibited\n• Failing to disclose AI use when your course requires it\n• Copying AI output without understanding or verifying it\n\nThe best protection is to check your course policy in the AI Guide before you start.',
   },
   {
-    keys: ['phase', 'phases', 'steps', 'workflow'],
+    keys: ['cite', 'citation', 'reference', 'credit', 'acknowledge', 'disclose'],
     answer:
-      'There are **4 phases**:\n\n01 · **Define** — Scope the problem and set a metric\n02 · **Build** — Prototype with IBM Bob\n03 · **Iterate** — Run a pilot and capture feedback\n04 · **Present** — Deliver your impact statement',
+      'To cite an AI tool, include:\n\n1. **Tool name** (e.g. ChatGPT, Copilot)\n2. **Date** you used it\n3. **The prompt** you entered\n\nExample: "ChatGPT (OpenAI, November 2026). Prompt: Explain the water cycle in simple terms."\n\nCheck your course policy in the AI Guide — some instructors have a specific format they prefer.',
   },
   {
-    keys: ['define', 'scope', 'pillar', 'persona', 'baseline', 'target', 'metric'],
+    keys: ['responsible', 'rubric', 'checklist', 'best practice', 'tip', 'advice', 'safe'],
     answer:
-      'In **Define**, you pick a strategic pillar, name the person you serve, describe the problem, and set a measurable outcome (metric, baseline, and target). Fill in the form under Phase 01 and hit **Save scope**.',
+      'The **AI-use rubric** in the AI Guide gives you a self-check list for each course. Before submitting any AI-assisted work, ask yourself:\n\n• Does my instructor allow AI for this task?\n• Is the final work in my own words?\n• Have I disclosed the tool I used?\n• Can I explain and defend every part of this work?\n\nIf you answered "no" to any of these, revise before submitting.',
   },
   {
-    keys: ['build', 'prototype', 'chart', 'demo', 'sample'],
+    keys: ['small business', 'business', 'entrepreneur', 'startup', 'company', 'workplace'],
     answer:
-      'In **Build**, explore the sample chart with synthetic data, run the practice demo, and plan the smallest end-to-end workflow your team will prototype on challenge day. Use IBM Bob to plan each step.',
+      'The same responsible-AI principles you learn here apply directly in a **small business** context:\n\n• **Disclose** when AI helped create customer-facing content\n• **Verify** any AI-generated data or facts before acting on them\n• **Keep humans in the loop** for decisions that affect people\n• **Protect privacy** — do not feed sensitive customer data into public AI tools\n\nAI literacy built in the classroom is a real workforce skill.',
   },
   {
-    keys: ['iterate', 'pilot', 'feedback', 'observation', 'change', 'retest'],
+    keys: ['guide', 'course', 'select', 'lookup', 'find', 'how to use', 'navigate'],
     answer:
-      'In **Iterate**, watch a real pilot user attempt a task, record what they struggled with, propose one change, and retest. Each entry is saved to the Feedback log.',
+      'To use the **AI Guide**:\n\n1. Click **AI Guide** in the top navigation\n2. Use the dropdown to select your course\n3. Read the policy, allowed and prohibited uses, and the self-check rubric\n4. Check the tips panel for responsible-use coaching specific to that course',
   },
   {
-    keys: ['impact', 'present', 'statement', 'rollout', 'risk', 'export', 'download', 'markdown'],
+    keys: ['help', 'stuck', 'confused', 'lost', 'question', 'support', 'what can'],
     answer:
-      'In **Present**, write a concise impact statement covering your prototype, measurement plan, statewide rollout, and top risk. Hit **Save impact draft** then **Download Markdown** to export it.',
-  },
-  {
-    keys: ['analytics', 'progress', 'track', 'metric', 'rate', 'completion'],
-    answer:
-      'Open **Analytics** to see phases started, pilot observations, roadmap tasks, and your outcome measurement. The sample chart uses synthetic data — on challenge day you can swap in real figures.',
-  },
-  {
-    keys: ['roadmap', 'timeline', 'milestone', 'checklist', 'task', 'delivery'],
-    answer:
-      'The **Roadmap** shows 4 milestones with 3 checklist tasks each (12 total). Check off tasks as you go — progress is saved in your browser and reflected in Analytics.',
-  },
-  {
-    keys: ['ibm bob', 'bob', 'ai', 'assistant', 'log'],
-    answer:
-      'IBM Bob is the AI assistant your team uses to plan and build the prototype. Keep a running **Bob Log** (BOB-LOG.md) documenting what you asked Bob and what it produced — judges review this during presentation.',
-  },
-  {
-    keys: ['team', 'member', 'role', 'who', 'lois', 'kaleb', 'collin', 'ryan', 'anaya'],
-    answer:
-      'Your team roles:\n\n• **Lois** — Documentation Lead\n• **Kaleb & Collin** — Developers\n• **Ryan** — Business Analytics Lead\n• **Anaya** — Strategy Lead',
-  },
-  {
-    keys: ['github', 'repo', 'repository', 'source', 'code'],
-    answer:
-      'The original starter code is at **github.com/Indyexe/ivy-tech-it-challenge-2026**. Use your team’s competition repository for challenge-day commits and keep the Bob Log up to date before presenting.',
-  },
-  {
-    keys: ['save', 'storage', 'data', 'browser', 'local'],
-    answer:
-      'All your work — scope, feedback, roadmap checkboxes, and impact drafts — is saved to **localStorage** in this browser. It is not synced to the server, so use the same browser and device during the challenge.',
-  },
-  {
-    keys: ['help', 'stuck', 'confused', 'lost', 'question', 'support'],
-    answer:
-      'Happy to help! Try asking about:\n\n• The phases (Define, Build, Iterate, Present)\n• The Analytics or Roadmap views\n• IBM Bob and the Bob Log\n• Your team roles\n\nOr just type your question and I will do my best.',
+      'Happy to help! Try asking about:\n\n• Whether AI is allowed on your homework\n• What counts as an academic integrity violation\n• How to cite AI tools\n• The self-check rubric for responsible use\n• Using AI responsibly in a small business\n• How to navigate the AI Guide',
   },
 ];
 
 // Fallback answer
 const FALLBACK =
-  "I don't have a specific answer for that yet. Try asking about the phases, roadmap, analytics, IBM Bob, your team roles, or how to save your work.";
+  "I don't have a specific answer for that yet. Try opening the **AI Guide** and selecting your course — it shows exactly what is and isn't allowed, plus a self-check rubric and tips.";
 
 // ── Response engine ────────────────────────────────────────────────────────────
 function getAnswer(text) {
@@ -178,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!greeted) {
       greeted = true;
       appendBot(
-        "Hi there! 👋 I'm the **Hub Assistant**. I can help you navigate the IT Challenge, understand the phases, track your progress, and more. What would you like to know?",
+        "Hi there! 👋 I'm the **AI Guide Assistant**. I can help you understand your course's AI policy, check if a specific use is allowed, learn how to cite AI tools, and more. What would you like to know?",
       );
     }
 

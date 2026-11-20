@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { impactStatement, sampleWeeks, summarizeWeeks } from './model.mjs';
+import { coursePolicies, impactStatement, sampleWeeks, summarizeWeeks } from './model.mjs';
 
 test('completion rate uses record totals and handles an empty selection', () => {
   const allWeeks = summarizeWeeks(sampleWeeks);
@@ -20,4 +20,19 @@ test('impact statement shows the baseline, target, and signed change in the save
   assert.match(statement, /Pilot at one campus/);
   assert.match(impactStatement({ baseline: '0', target: '5', unit: 'records' }), /Target change: \+5 records/);
   assert.match(impactStatement(), /Save finite baseline and target values/);
+});
+
+test('coursePolicies has at least 5 entries each with required fields', () => {
+  assert.ok(Array.isArray(coursePolicies));
+  assert.ok(coursePolicies.length >= 5);
+  const required = ['id', 'code', 'title', 'instructor', 'policy', 'allowed', 'prohibited', 'tips', 'rubric'];
+  for (const entry of coursePolicies) {
+    for (const field of required) {
+      assert.ok(Object.hasOwn(entry, field), `entry ${entry.id} missing field: ${field}`);
+    }
+    assert.ok(Array.isArray(entry.rubric) && entry.rubric.length > 0, `entry ${entry.id} rubric must be a non-empty array`);
+    assert.ok(Array.isArray(entry.allowed) && entry.allowed.length > 0, `entry ${entry.id} allowed must be non-empty`);
+    assert.ok(Array.isArray(entry.prohibited) && entry.prohibited.length > 0, `entry ${entry.id} prohibited must be non-empty`);
+    assert.ok(Array.isArray(entry.tips) && entry.tips.length > 0, `entry ${entry.id} tips must be non-empty`);
+  }
 });
